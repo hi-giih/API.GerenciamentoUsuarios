@@ -27,7 +27,7 @@ def create_user():
                  break
         
         if email_existe == True:
-            return jsonify({"message":"O email informado já está cadastrado"}), 404
+            return jsonify({"message":"O email informado já está cadastrado"}), 400
         else:
             users.append(new_user)
         print(dado)
@@ -54,10 +54,43 @@ def get_user(id):
     
     return jsonify({"message":"Usuario não existe"}), 404
 
+
 @app.route('/users/<int:id>', methods=['PUT'])
 def update_user(id):
-    
+    useer = None
+    for u in users:
+        if u.id == id:
+            useer= u
 
+    if useer == None:
+        return jsonify({"message": "Não foi possivel encontrar o usuario"}),404
+        
+    dado = request.get_json()
+    if not dado.get('nome') or len(dado['nome']) < 3 or len(dado['nome']) > 50:
+        return jsonify({"message": "O nome deve ter entre 3 e 50 caracteres"}), 400
+    if not dado.get('idade') or int(dado['idade']) < 8 or int(dado['idade']) > 100:
+        return jsonify({"message": "A idade deve estar entre 8 e 100 anos"}), 400
+    if not dado.get('email'):
+        return jsonify({"message": "Email é obrigatório"}), 400
+
+    useer.nome = dado['nome']
+    useer.idade = dado['idade']
+    useer.email = dado['email']
+    return jsonify({"message": "Usuario atualizado com sucesso"})
+
+@app.route('/users/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    useer = None
+    for u in users:
+        if u.id == id:
+            useer= u
+            break
+
+    if useer == None:
+        return jsonify({"message": "Não foi possivel encontrar esse usuario"}),404
+        
+    users.remove(useer)
+    return jsonify({"message": "Usuario deletada com sucesso"})
 
 if __name__=='__main__':
     app.run(debug=True) 
