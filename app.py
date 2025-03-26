@@ -32,7 +32,7 @@ def create_user():
             users.append(new_user)
         print(dado)
         id_control_user += 1
-        return jsonify({"message":"Usuario criado com sucesso"})
+        return jsonify({"message":"Usuario criado com sucesso", "id":new_user.id})
 
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -61,6 +61,7 @@ def update_user(id):
     for u in users:
         if u.id == id:
             useer= u
+            break
 
     if useer == None:
         return jsonify({"message": "Não foi possivel encontrar o usuario"}),404
@@ -78,6 +79,7 @@ def update_user(id):
     useer.email = dado['email']
     return jsonify({"message": "Usuario atualizado com sucesso"})
 
+
 @app.route('/users/<int:id>', methods=['DELETE'])
 def delete_user(id):
     useer = None
@@ -94,3 +96,4 @@ def delete_user(id):
 
 if __name__=='__main__':
     app.run(debug=True) 
+    
